@@ -36,7 +36,7 @@ class DCESearchExplainer(Explainer):
             if self.cls_mat[instance.id,d_inst.id] == -1:
                 l_data_inst = self.oracle.predict(d_inst)
                 self.cls_mat[instance.id,d_inst.id] = (l_input_inst == l_data_inst)
-                self.cls_mat[d_inst.id,instance.id] = (l_input_inst == l_data_inst)
+                self.cls_mat[d_inst.id,instance.id] = (l_input_inst == l_data_inst) # modify this lines
 
             if self.cls_mat[instance.id,d_inst.id] == 0:
                 if self.dist_mat[instance.id,d_inst.id] == -1:                

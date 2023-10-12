@@ -2,6 +2,7 @@ from os import listdir
 from os.path import isfile, join
 
 import numpy as np
+import networkx as nx
 
 from src.n_dataset.instances.graph import GraphInstance
 from src.n_dataset.generators.base import Generator
@@ -34,23 +35,52 @@ class ADHD(Generator):
         instance_id = 0
         graph_label = 0
         # For each class folder
-        for path in paths:
-            for filename in listdir(path):
-                # avoiding files not related to the dataset
-                if 'DS_Store' not in filename:
-                    # Reading the adjacency matrix
-                    with open(path.join(path, filename), 'r') as f:
-                        if filename[-3:]=='csv':
-                            l = [[int(float(num)) for num in line.split(',')] for line in f] # if .csv 
-                        else:
-                            l = [[int(num) for num in line.split(' ')] for line in f] # if .txt
+        # for filename in listdir(self.td_class_path):
+        #     # avoiding files not related to the dataset
+        #     if 'DS_Store' not in filename:
+        #         print(filename, self.td_class_path)  
+        #         # Reading the adjacency matrix
+        #         with open(join(self.td_class_path, filename), 'r') as f:
+        #             l = [[int(num) for num in line.split(' ')] for line in f] # if .txt
 
-                        # Creating the instance
-                        l_array = np.array(l)
-                        inst = GraphInstance(instance_id, graph_label, l_array, dataset=self.dataset)
-                        instance_id += 1    
-                        #inst.name = filename.split('.')[0]
-                        
-                        # Adding the instance to the instances list
-                        self.dataset.instances.append(inst)
-            graph_label +=1
+        #             # Creating the instance
+        #             l_array = np.array(l)
+        #             inst = GraphInstance(instance_id, graph_label, l_array, dataset=self.dataset)
+        #             instance_id += 1    
+        #             #inst.name = filename.split('.')[0]
+                    
+        #             # Adding the instance to the instances list
+        #             self.dataset.instances.append(inst)
+        #     graph_label +=1
+
+        for filename in listdir(self.adhd_class_path):
+            # avoiding files not related to the dataset
+            #print(filename, self.adhd_class_path)  
+            # Reading the adjacency matrix
+            graph_path = join(self.adhd_class_path, filename)
+            adjlist_file = None
+            for file in listdir(graph_path):
+                print(file)
+                print(file[-11:])
+                if file[-11:]=='_label.json':
+                    with open(join(graph_path, file), 'r') as f:
+                        print(file)
+                        graph_label = int(f.readline())
+                        print(graph_label)
+                else:
+                    adjlist_file = file
+
+            adjlist = join(graph_path, adjlist_file)
+            data = nx.read_adjlist(adjlist)
+            npdata = nx.to_numpy_array(data)
+
+            # Creating the instance
+            #l_array = np.array(l)
+            inst = GraphInstance(instance_id, graph_label, npdata, dataset=self.dataset)
+            #print(graph_label)
+            instance_id += 1    
+            #inst.name = filename.split('.')[0]
+            
+            # Adding the instance to the instances list
+            self.dataset.instances.append(inst)
+            #graph_label +=1
