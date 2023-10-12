@@ -1,0 +1,35 @@
+{
+    "dataset": {
+        "class": "src.n_dataset.dataset_base.Dataset",
+        "parameters": {
+            "generator": {
+                "class": "src.n_dataset.generators.adhd.ADHD", 
+                "parameters": { "data_dir": "data\\datasets\\adhd\\graphs" }
+            }
+        }
+    },
+    "oracle": {
+        "class": "src.oracle.nn.torch.OracleTorch",
+        "parameters": {
+            "epochs": 100,
+            "batch_size": 64,
+            "optimizer": {
+                "class": "torch.optim.RMSprop",
+                    "parameters": {
+                        "lr":0.001,
+                        "momentum":0.5
+                    }
+                },
+            "loss_fn": {
+                "class": "torch.nn.CrossEntropyLoss",
+                "parameters": {     
+                    "reduction":"mean"
+                }
+            },
+            "model": { 
+                "class": "src.oracle.nn.gcn.DownstreamGCN",
+                "parameters": {"num_conv_layers":2,"num_dense_layers":1,"conv_booster":2,"linear_decay":1.8}
+            } 
+        }
+    }
+}
