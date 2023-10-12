@@ -12,9 +12,7 @@ class ADHD(Generator):
 
     def init(self):
         base_path = self.local_config['parameters']['data_dir']
-        # Path to the instances of the "Typical development class"
-        self.td_class_path = join(base_path, 'td')
-        # Path to the instances of the "Autism Spectrum Disorder class"
+        # Path to the instances of the "Attention Deficit Hyperactivity Disorder class"
         self.adhd_class_path = join(base_path, 'adhd_dataset')  
         self.generate_dataset()
 
@@ -29,58 +27,52 @@ class ADHD(Generator):
         """
         Reads the dataset from the adjacency matrices
         """
-        
-        paths = [self.td_class_path, self.adhd_class_path]
 
         instance_id = 0
         graph_label = 0
-        # For each class folder
-        # for filename in listdir(self.td_class_path):
-        #     # avoiding files not related to the dataset
-        #     if 'DS_Store' not in filename:
-        #         print(filename, self.td_class_path)  
-        #         # Reading the adjacency matrix
-        #         with open(join(self.td_class_path, filename), 'r') as f:
-        #             l = [[int(num) for num in line.split(' ')] for line in f] # if .txt
-
-        #             # Creating the instance
-        #             l_array = np.array(l)
-        #             inst = GraphInstance(instance_id, graph_label, l_array, dataset=self.dataset)
-        #             instance_id += 1    
-        #             #inst.name = filename.split('.')[0]
-                    
-        #             # Adding the instance to the instances list
-        #             self.dataset.instances.append(inst)
-        #     graph_label +=1
 
         for filename in listdir(self.adhd_class_path):
-            # avoiding files not related to the dataset
-            #print(filename, self.adhd_class_path)  
-            # Reading the adjacency matrix
+            # Reading the graph files
             graph_path = join(self.adhd_class_path, filename)
             adjlist_file = None
             for file in listdir(graph_path):
-                print(file)
-                print(file[-11:])
                 if file[-11:]=='_label.json':
                     with open(join(graph_path, file), 'r') as f:
-                        print(file)
                         graph_label = int(f.readline())
-                        print(graph_label)
-                else:
+                elif file[-8:] == '.adjlist':
                     adjlist_file = file
 
+            # Reading the adjacency matrix
             adjlist = join(graph_path, adjlist_file)
-            data = nx.read_adjlist(adjlist)
-            npdata = nx.to_numpy_array(data)
+            npdata = _nd_array_from_adjlist(adjlist)
 
             # Creating the instance
-            #l_array = np.array(l)
             inst = GraphInstance(instance_id, graph_label, npdata, dataset=self.dataset)
-            #print(graph_label)
             instance_id += 1    
-            #inst.name = filename.split('.')[0]
             
             # Adding the instance to the instances list
             self.dataset.instances.append(inst)
-            #graph_label +=1
+
+            
+def _nd_array_from_adjlist(path: str):
+        with open(path, 'r') as f:
+            data = []
+            while f.readable():
+                line = f.readline()
+                if not line:
+                    break
+                if len(line) > 0 and len(line.strip()) > 0 and line[0] != '#':
+                    splitted = line.split(' ')
+                    vertex_id = int(splitted[0])
+                    vertex_arist_lenght = int(splitted[1])
+                    data.append([])
+                    for _ in range(vertex_arist_lenght):
+                        if not f.readable():
+                            break
+                        edge = int(f.readline().split(' ')[0])
+                        data[vertex_id].append(edge)
+            result = np.zeros((len(data),len(data)))
+            for i,vertex in enumerate(data):
+                for edge in vertex:
+                    result[i][edge] = 1
+            return result
