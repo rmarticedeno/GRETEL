@@ -4,7 +4,7 @@
         "parameters": {
             "generator": {
                 "class": "src.n_dataset.generators.adhd.ADHD", 
-                "parameters": { "data_dir": "data\\datasets\\adhd\\graphs" }
+                "parameters": { "data_dir": "data/datasets/adhd/graphs" }
             }
         }
     },
