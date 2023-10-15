@@ -15,7 +15,7 @@
                  //{"compose_tcr-64_gcn" : "config/snippets/do-pairs/TCR_256_64_0.1-GCN.json"},
                  //{"compose_tcr-64_gcn" : "config/snippets/do-pairs/TCR_128_32_0.2-GCN.json"}
         ],
-    "explainers": [{"class": "src.explainer.search.dce.DCESearchExplainer"}],
+    "explainers": [{"class": "src.explainer.search.dcerank.DCESearchExplainerWithRank"}],
     "compose_mes" : "config/snippets/default_metrics.json",
     "compose_strs" : "config/snippets/default_store_paths.json"
 }
