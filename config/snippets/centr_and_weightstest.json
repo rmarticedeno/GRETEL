@@ -1,6 +1,8 @@
 
 {
     "manipulators": [
+    { "class": "src.n_dataset.manipulators.centralities.NodeCentrality", "parameters": {} },
+    { "class": "src.n_dataset.manipulators.diameter.Diameter", "parameters": {} },
     { "class": "src.n_dataset.manipulators.rank.RankManipulator", "parameters": {} }           
     ]    
 }
