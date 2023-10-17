@@ -18,7 +18,7 @@ class Diameter(BaseManipulator):
             diameter = nx.diameter(subgraph)
         
         feature_map = {
-            "diameter": diameter
+            "diameter": list(diameter)
         }
         return feature_map
     
